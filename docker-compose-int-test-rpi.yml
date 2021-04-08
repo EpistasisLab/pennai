@@ -1,0 +1,70 @@
+version: '3'
+
+services:
+
+  tester:
+    build: ./tests/integration
+    depends_on:
+      - lab
+      - machine
+      - dbmongo
+    tty: true
+    stdin_open: true
+    command: bash -c "sh /root/wait_pennai.sh && sh /root/int_test_runner.sh"
+    volumes:
+      - "./tests/integration/jest:/src/jest"
+      - "./data/datasets/test/integration:/appsrc/data/datasets/test/integration"
+      - "./target:/target"
+      - "./ai/__pycache__:/appsrc/ai/__pycache__"
+      - "./ai/metalearning/__pycache__:/appsrc/ai/metalearning/__pycache__"
+
+  lab:
+    build:
+      context: .
+      dockerfile: docker/lab/rpi.Dockerfile
+    tty: true
+    stdin_open: true
+    volumes:
+      - "./:/appsrc"
+      - "/appsrc/lab/webapp/node_modules"
+      - "/appsrc/lab/node_modules"
+    ports:
+      #- "443:443"
+      - "5080:5080"
+    environment:
+      - AI_RECOMMENDER=random
+      - AI_NUMRECOMMEND=1
+      - AI_AUTOSTART=1
+      - STARTUP_DATASET_PATH=/appsrc/data/datasets/test/test_mixed
+    env_file: ./config/common.env
+    depends_on:
+      - dbmongo
+
+  machine:
+    build:
+      context: .
+      dockerfile: docker/machine/rpi.Dockerfile
+    tty: true
+    stdin_open: true
+    volumes:
+      - "./:/appsrc"
+      - "/appsrc/machine/node_modules"
+    ports:
+      - "5081:5081"
+    environment:
+      - STARTUP_DATASET_PATH=/appsrc/data/datasets/test/test_mixed
+      - MACHINE_PORT=5081
+    env_file: ./config/common.env
+    depends_on:
+      - lab
+      - dbmongo
+
+  dbmongo:
+    build:
+      context: .
+      dockerfile: docker/dbmongo/rpi.Dockerfile
+    tty: true
+    stdin_open: true
+    ports:
+      - "27017:27017"
+    env_file: ./config/common.env

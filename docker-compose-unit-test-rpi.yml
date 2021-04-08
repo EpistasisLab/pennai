@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+  unit_tester:
+    build:
+      context: .
+      dockerfile: tests/unit/rpi.Dockerfile
+    working_dir: /appsrc
+    command: bash -c "dos2unix tests/unit/unit_test_runner.sh && sh tests/unit/unit_test_runner.sh"
+    tty: true
+    stdin_open: true
+    volumes:
+      - "./:/appsrc"
+      - "/appsrc/lab/webapp/node_modules"
+      - "/appsrc/lab/node_modules"

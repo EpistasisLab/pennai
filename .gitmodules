@@ -1,0 +1,3 @@
+[submodule "docker/pennai-arm64-deps"]
+	path = docker/pennai-arm64-deps
+	url = https://github.com/EpistasisLab/pennai-arm64-deps

@@ -3,6 +3,9 @@ wget localhost:51678/v1/metadata -t 1 -qO- &> /dev/null
 if [ ! -v PROJECTS_FILE ]; then
     PROJECTS_FILE='projects.json';
 fi
+if [ ! -d /var/lib/mongodb ]; then
+    mkdir -p /var/lib/mongodb;
+fi
 mongod -f /etc/mongod.conf --fork
 #check to see if db was loaded
 if [ ! -f '/root/forum' ]; then

@@ -1,0 +1,48 @@
+version: '3'
+
+services:
+  lab:
+    build:
+      context: .
+      dockerfile: docker/lab/rpi.Dockerfile
+    tty: true
+    stdin_open: true
+    volumes:
+      - "./:/appsrc"
+      - "/appsrc/lab/webapp/node_modules"
+      - "/appsrc/lab/node_modules"
+    ports:
+      - "5080:5080"
+    env_file:
+      - ./config/common.env
+      - ./config/ai.env
+    depends_on:
+      - dbmongo
+
+  machine:
+    build:
+      context: .
+      dockerfile: docker/machine/rpi.Dockerfile
+    tty: true
+    stdin_open: true
+    volumes:
+      - "./:/appsrc"
+      - "/appsrc/machine/node_modules"
+    ports:
+      - "5081:5081"
+    env_file: ./config/common.env
+    environment:
+      - MACHINE_PORT=5081
+    depends_on:
+      - lab
+      - dbmongo
+
+  dbmongo:
+    build:
+      context: .
+      dockerfile: docker/dbmongo/rpi.Dockerfile
+    tty: true
+    stdin_open: true
+    ports:
+      - "27017:27017"
+    env_file: ./config/common.env
