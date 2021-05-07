@@ -26,7 +26,7 @@
     "compression": "^1.6.2",
     "express": "^4.17.1",
     "lodash": "^4.17.19",
-    "mongodb": "^2.2.35",
+    "mongodb": "^3.1.13",
     "mongoskin": "^2.1.0",
     "morgan": "^1.10.0",
     "multer": "^1.4.2",
